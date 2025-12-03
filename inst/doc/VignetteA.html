@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Plotting Reference Intervals with superb</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Plotting Reference Intervals with
+<code>superb</code></h1>
+
+
+
+<p>In this vignette, we show how to illustrate reference intervals using
+<code>superb</code>. We also show how the precision of this interval
+limits could be illustrated. See <span class="citation">NCCLS
+(2000)</span> for a definition of reference intervals. In what follows,
+we use the package <code>referenceIntervals</code> from <span class="citation">Finnegan (2020)</span>.</p>
+<div id="what-is-a-reference-interval" class="section level2">
+<h2>What is a reference interval?</h2>
+<p>The reference interval is a description of the whole population. This
+is in contrast with other error bar functions who are associated with a
+specific statistics. For example, there exists the standard error of the
+mean, or the confidence interval of the median. The reference interval
+on the other hand, is an interval of all the individuals in the sample,
+and it aims at illustrating the normal range of individuals in the
+studied population. It is therefore much wider than say, the confidence
+interval of the mean because the mean is not interested with the whole
+sample, only with the center of the sample.</p>
+<p>As an example, in a pharmacological cross-over study, five drug
+concentrations A through E are tested for their effect on glucose level
+(in mg/dL). The authors might be interested in knowing whether the
+glucose levels are different. In that case, a confidence interval for
+the five mean glucose level might be useful.</p>
+<p>However, the research may also want to indentify the “normal range”
+of values of glucose levels with either of the concentrations. Note tha
+“normal range” is a misnomer creating confusions with the “normal
+distribution”. Instead, we stick to the expression
+<code>Reference interval</code> (as promoted by many, e.g., <span class="citation">NCCLS (2000)</span>).</p>
+<p>This interval is meant to capture a given fraction of the population
+individuals. These individuals are variable, but this variability is ok
+(I don’t want to say <em>normal</em>). This range could be “associated
+with good health” for example <span class="citation">(NCCLS, 2000, p.
+3)</span>.</p>
+<p>Herein, we show how to illustrate <code>reference intervals</code>.
+To make the relation with the individuals more evident, we will also
+present these intervals in conjunction with alternative
+representations.</p>
+</div>
+<div id="displaying-a-reference-interval" class="section level2">
+<h2>Displaying a reference interval</h2>
+<p>To accomplish the basic computations, we rely on the excellent
+<code>referenceIntervals</code> from <span class="citation">Finnegan
+(2020)</span>. This package offers many more options that will not be
+explored herein.</p>
+<p>Before we begin, let’s load the needed libraries…</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)            <span class="co"># for the graphing commands</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(superb)             <span class="co"># for superbPlot and GRD</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(referenceIntervals) <span class="co"># for computing reference intervals</span></span></code></pre></div>
+<p>(if some of these packages are not on your computer, first install it
+with for example <code>install.packages(&quot;referenceIntervals&quot;)</code>
+)</p>
+<p>… then let’s create a ficticious data set on the fly:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>glucoselevels <span class="ot">&lt;-</span> <span class="fu">GRD</span>(<span class="at">BSFactors =</span> <span class="st">&quot;concentration(A,B,C,D,E)&quot;</span>, </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                    <span class="at">SubjectsPerGroup =</span> <span class="dv">100</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                    <span class="at">RenameDV =</span> <span class="st">&quot;gl&quot;</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>                    <span class="at">Effects =</span> <span class="fu">list</span>(<span class="st">&quot;concentration&quot;</span> <span class="ot">=</span> <span class="fu">extent</span>(<span class="dv">10</span>) ),</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>                    <span class="at">Population =</span> <span class="fu">list</span>(<span class="at">mean =</span> <span class="dv">100</span>, <span class="at">stddev =</span> <span class="dv">20</span>) ) </span></code></pre></div>
+<p>This dataset will generate 100 individuals randomly for each of the
+five concentrations (column <code>concentration</code>, with levels from
+A to E). The dependent variable, <em>glucose level</em>, is abbreviated
+to <code>gl</code>.</p>
+<p>Here is a snapshot of it:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">head</span>(glucoselevels)</span></code></pre></div>
+<pre><code>##   id concentration        gl
+## 1  1             A 101.45213
+## 2  2             A  95.74076
+## 3  3             A 114.73102
+## 4  4             A 110.93077
+## 5  5             A  93.04546
+## 6  6             A  83.54635</code></pre>
+<p>A simple plot could show the mean for each concentration along with
+the 95% confidence interval of the means, with e.g.,</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">superb</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>    gl <span class="sc">~</span> concentration,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    glucoselevels, </span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">&quot;mean&quot;</span>, </span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">errorbar  =</span> <span class="st">&quot;CI&quot;</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    <span class="at">gamma     =</span> <span class="fl">0.95</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>    <span class="at">plotLayout =</span> <span class="st">&quot;line&quot;</span>)</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 1. Mean glucose level as a function of concentration." src="data:image/png;base64,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" alt="Figure 1. Mean glucose level as a function of concentration." />
+<div class="figcaption"><strong>Figure 1</strong>. Mean glucose level as
+a function of concentration.</div>
+</div>
+<p>As seen, glucose level means are affected by the concentration (that
+effect was requested in the <code>GRD()</code> command above). Also note
+the vertical scale: it is very restricted around the means, yet,
+individuals are often much outside the visible part of the scale.</p>
+<p>To convince yourself of that, ask for the smallest glucose level and
+the highest:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">min</span>(glucoselevels<span class="sc">$</span>gl)</span></code></pre></div>
+<pre><code>## [1] 46.97496</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">max</span>(glucoselevels<span class="sc">$</span>gl)</span></code></pre></div>
+<pre><code>## [1] 154.1174</code></pre>
+<p>Instead of asking for an error bar representing a confidence interval
+(CI), let’s ask for error bar representing the reference intervals
+(RI).</p>
+<p>Reference intervals are not (at this time) shipped with
+<code>superb</code>. Let’s define a short-name version of this with</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>RI.mean <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">gamma =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>    <span class="fu">refLimit</span>(data, <span class="at">refConf =</span> gamma)<span class="sc">$</span>Ref_Int</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>}</span></code></pre></div>
+<p>We actually use the function <code>refLimit()</code> from the
+<code>referenceIntervals</code> package. There are many options in that
+function; please consult the documentation for that package. We only
+preserve the reference interval limits with <code>$Ref_Int</code> (that
+function outputs other information, as we will see below).</p>
+<p>The one argument that we use is the confidence level of the reference
+interval, <code>refConf</code> (recommended is 95%, which is the default
+if none is specified).</p>
+<p>As you may note, the <code>RI</code> function is <em>attached</em> to
+the mean. This is arbitrary: in <code>superb</code>, error bars must be
+error bars of a summary statistic. You could have used any function,
+that won’t change the position of the interval.</p>
+<p>This is all we need to make our first reference interval plots:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">superb</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>    gl <span class="sc">~</span> concentration,</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    glucoselevels, </span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">&quot;mean&quot;</span>, <span class="co"># mean is what RI is attached to</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    <span class="at">errorbar  =</span> <span class="st">&quot;RI&quot;</span>,   <span class="co"># RI calls the function above</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>    <span class="at">gamma     =</span> <span class="fl">0.95</span>,   <span class="co"># select the coverage desired</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>    <span class="at">plotLayout =</span> <span class="st">&quot;line&quot;</span> )</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 2. Mean glucose level and 95% reference intervals as a function of concentration." src="data:image/png;base64,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" alt="Figure 2. Mean glucose level and 95% reference intervals as a function of concentration." />
+<div class="figcaption"><strong>Figure 2</strong>. Mean glucose level
+and 95% reference intervals as a function of concentration.</div>
+</div>
+<p>You can see that the vertical range is much wider now than in Figure
+1. It is ok, as these intervals cover most of the individuals in the
+samples.</p>
+</div>
+<div id="uncertainty-in-the-reference-interval-limits" class="section level2">
+<h2>Uncertainty in the reference interval limits</h2>
+<p>The plot from Figure 2 shows the estimated range of individuals from
+a sample, and therefore has some uncertainty in the exact location of
+the tips. It is possible to add some indication of the width of
+uncertainty regarding these tips by estimating a confidence interval for
+each extremity.</p>
+<p>The exact computation is based on the uncertainty of quantiles [e.g.,
+the 2.5% quantile for the lower limit of the population as infered from
+the 2.5% quantile of the sample, when 95% RI are plotted; see e.g.,
+<span class="citation">NCCLS (2000)</span>; <span class="citation">Harding, Tremblay, &amp; Cousineau (2014)</span>].</p>
+<p>In the packge <code>referenceIntervals</code>, the function
+<code>refLimit()</code> also produces this information by default. The
+novelty is that the confidence level of the confidence interval for the
+tips of the RI may be different from the reference interval level.</p>
+<p>As an example, the RI coverage interval might be a 95%, so as to
+include a wide proportion of the population, and the certainty on the
+tip positions of that RI might be low, e.g., 80%, because we fear that
+the sample is not the most representative.</p>
+<p>To acheive this, we wrap the <code>refLimit()</code> function in a
+shorter name function, <code>ciloRI</code> for the confidence intervals
+of the lower part of the RI, and <code>cihiRI</code> for the confidence
+intervals of the upper part of the RI. This function requires two
+gammas, one for the RI level, and the second for the CI level. Thus, we
+get:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>ciloRI.mean <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">gamma =</span> <span class="fu">c</span>(<span class="fl">0.95</span>, <span class="fl">0.90</span>) ) {</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>    <span class="fu">refLimit</span>(data, <span class="at">refConf =</span> gamma[<span class="dv">1</span>], <span class="at">limitConf =</span> gamma[<span class="dv">2</span>] )<span class="sc">$</span>Conf_Int[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>}</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>cihiRI.mean <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">gamma =</span> <span class="fu">c</span>(<span class="fl">0.95</span>, <span class="fl">0.90</span>) ) {</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>    <span class="fu">refLimit</span>(data, <span class="at">refConf =</span> gamma[<span class="dv">1</span>], <span class="at">limitConf =</span> gamma[<span class="dv">2</span>] )<span class="sc">$</span>Conf_Int[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>]</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>}</span></code></pre></div>
+<p>Again, this is all we need. We can for example use the following to
+see the uncertainty in the top tips of all the RI:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">superb</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>    gl <span class="sc">~</span> concentration,</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>    glucoselevels, </span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">&quot;mean&quot;</span>, <span class="at">errorbar =</span> <span class="st">&quot;cihiRI&quot;</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>    <span class="at">gamma     =</span> <span class="fu">c</span>(<span class="fl">0.95</span>, <span class="fl">0.90</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>    <span class="at">plotLayout =</span> <span class="st">&quot;line&quot;</span> ) </span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 3. Mean glucose level and 90% confidence intervals of the upper RI tips." src="data:image/png;base64,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" alt="Figure 3. Mean glucose level and 90% confidence intervals of the upper RI tips." />
+<div class="figcaption"><strong>Figure 3</strong>. Mean glucose level
+and 90% confidence intervals of the upper RI tips.</div>
+</div>
+<p>Well, that is weird because now, we only see an error bar way up
+there. The RI error bar is no longer visible because
+<code>superbPlot()</code> can only show one sort of error bar at a
+time.</p>
+<p>Lets correct this. The gist of the following is to perform three
+plots, one showing the RI intervals (as Figure 2 above), a second
+showing the confidence interval of the RI top tips (as Figure 3 just
+above), and one last plot showing the confidence interval of the RI
+bottom tips. Plots 2 and 3 must be transparent so that they can be
+superimposed on top of plot 1.</p>
+<p>To that end, we use a set of graphic directives that makes the plot
+transparent. It will be appplied to plots 2 and 3 (it hides the grid (if
+any) and set the background of the whole plot and of the panel to
+transparent). This operation is made with the function
+<code>makeTransparent()</code>.</p>
+<p>It is also necessary that all plots have the same range, so that they
+align correctly when superimpose. To do so, we set the vertical range
+from 0 to 200. We also add a description in the title of the plot. These
+are all grouped in a list:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>ornate <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>        <span class="fu">labs</span>(<span class="at">title =</span><span class="fu">paste</span>(<span class="st">&quot;(tick)     95% reference intervals (RI)&quot;</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>                        <span class="st">&quot;</span><span class="sc">\n</span><span class="st">(red)      90% confidence intervals of upper 95% RI&quot;</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>                        <span class="st">&quot;</span><span class="sc">\n</span><span class="st">(purple) 90% confidence intervals of lower 95% RI&quot;</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                        <span class="st">&quot;</span><span class="sc">\n</span><span class="st">(blue)    95% confidence intervals of the mean&quot;</span>)),</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>        <span class="fu">coord_cartesian</span>( <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">000</span>,<span class="dv">200</span>) ),</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>        <span class="fu">theme_light</span>(<span class="at">base_size=</span><span class="dv">10</span>) <span class="co"># smaller font</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>)</span></code></pre></div>
+<p>Now that these are dealt with, let’s do our three plots:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>plt1 <span class="ot">&lt;-</span> <span class="fu">superb</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>    gl <span class="sc">~</span> concentration,</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>    glucoselevels, </span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">&quot;mean&quot;</span>, </span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>    <span class="at">errorbar  =</span> <span class="st">&quot;RI&quot;</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>    <span class="at">gamma     =</span> <span class="fl">0.95</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>    <span class="at">errorbarParams =</span> <span class="fu">list</span>(<span class="at">width =</span> <span class="fl">0.0</span>, <span class="at">linewidth =</span> <span class="fl">1.5</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>                          <span class="at">position =</span> <span class="fu">position_nudge</span>( <span class="fl">0.0</span>) ),</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>    <span class="at">plotLayout =</span> <span class="st">&quot;line&quot;</span> ) <span class="sc">+</span> ornate</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>plt2 <span class="ot">&lt;-</span> <span class="fu">superb</span>(</span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>    gl <span class="sc">~</span> concentration,</span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>    glucoselevels, </span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">&quot;mean&quot;</span>, </span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>    <span class="at">errorbar  =</span> <span class="st">&quot;cihiRI&quot;</span>,</span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>    <span class="at">gamma     =</span> <span class="fu">c</span>(<span class="fl">0.95</span>, <span class="fl">0.90</span>),</span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a>    <span class="at">errorbarParams =</span> <span class="fu">list</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>,</span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a>                          <span class="at">direction =</span> <span class="st">&quot;left&quot;</span>,</span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a>                          <span class="at">position =</span> <span class="fu">position_nudge</span>(<span class="sc">-</span><span class="fl">0.15</span>) ),</span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a>    <span class="at">plotLayout =</span> <span class="st">&quot;line&quot;</span> ) <span class="sc">+</span> ornate <span class="sc">+</span> <span class="fu">makeTransparent</span>()</span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a>plt3 <span class="ot">&lt;-</span> <span class="fu">superb</span>(</span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a>    gl <span class="sc">~</span> concentration,</span>
+<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a>    glucoselevels, </span>
+<span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">&quot;mean&quot;</span>, </span>
+<span id="cb15-24"><a href="#cb15-24" tabindex="-1"></a>    <span class="at">errorbar  =</span> <span class="st">&quot;ciloRI&quot;</span>,</span>
+<span id="cb15-25"><a href="#cb15-25" tabindex="-1"></a>    <span class="at">gamma     =</span> <span class="fu">c</span>(<span class="fl">0.95</span>, <span class="fl">0.90</span>),</span>
+<span id="cb15-26"><a href="#cb15-26" tabindex="-1"></a>    <span class="at">errorbarParams =</span> <span class="fu">list</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">&quot;purple&quot;</span>,</span>
+<span id="cb15-27"><a href="#cb15-27" tabindex="-1"></a>                          <span class="at">direction =</span> <span class="st">&quot;left&quot;</span>,</span>
+<span id="cb15-28"><a href="#cb15-28" tabindex="-1"></a>                          <span class="at">position =</span> <span class="fu">position_nudge</span>(<span class="sc">-</span><span class="fl">0.15</span>) ),</span>
+<span id="cb15-29"><a href="#cb15-29" tabindex="-1"></a>    <span class="at">plotLayout =</span> <span class="st">&quot;line&quot;</span> ) <span class="sc">+</span> ornate <span class="sc">+</span> <span class="fu">makeTransparent</span>()</span></code></pre></div>
+<p>Things to note: (1) only the second and third uses the transparent
+directives; (2) the confidence levels (<code>gamma</code>) have two
+numbers in plots 2 and 3: the first for the RI, the second for the CI of
+the RI; (3) with <code>errorbarParams</code>, we gave different
+attributes to the various error bars (purple color for the lower CI, for
+example) and moved them sligtly to the left (position).</p>
+<p>Almost there. Lets turn these plots into graphic objects
+(<code>grob</code>), then superimpose them onto an empty plot:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># transform the three plots into visual objects</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>plt1 <span class="ot">&lt;-</span> <span class="fu">ggplotGrob</span>(plt1)</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>plt2 <span class="ot">&lt;-</span> <span class="fu">ggplotGrob</span>(plt2)</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>plt3 <span class="ot">&lt;-</span> <span class="fu">ggplotGrob</span>(plt3)</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="co"># superimpose the grobs onto an empty ggplot </span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt1) <span class="sc">+</span> </span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt2) <span class="sc">+</span> </span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt3)</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 3a. Mean glucose level and 95% reference intervals with 95% confidence intervals." src="data:image/png;base64,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" alt="Figure 3a. Mean glucose level and 95% reference intervals with 95% confidence intervals." />
+<div class="figcaption"><strong>Figure 3a</strong>. Mean glucose level
+and 95% reference intervals with 95% confidence intervals.</div>
+</div>
+</div>
+<div id="is-that-it" class="section level2">
+<h2>Is that it?</h2>
+<p>Well, we are just begining! The whole point of the reference
+intervals is to provide an indication of the individuals in the
+population. It would be great if we could see these, don’t you
+think?</p>
+<p>There are multiple ways to illustrate the individuals from a sample.
+One is using jittered dots: each member of the sample is illustrated
+with a small dot whose horizontal position can be jittered randomly to
+avoid that many dots superimposes and no longer be visible.</p>
+<p>These is a layout in <code>superb</code> that achieve exacly that,
+<code>pointjitter</code>. You can for example redo plot 1 but changing
+the layout, then superimpose the plots again, as in</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># redo plt1; the other 2 are still in memory</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>plt1 <span class="ot">&lt;-</span> <span class="fu">superb</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>    gl <span class="sc">~</span> concentration,</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>    glucoselevels, </span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">&quot;mean&quot;</span>, </span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>    <span class="at">errorbar  =</span> <span class="st">&quot;RI&quot;</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>    <span class="at">gamma     =</span> <span class="fl">0.95</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>    <span class="at">errorbarParams =</span> <span class="fu">list</span>(<span class="at">width =</span> <span class="fl">0.0</span>, <span class="at">linewidth =</span> <span class="fl">1.5</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>                          <span class="at">position =</span> <span class="fu">position_nudge</span>( <span class="fl">0.0</span>) ),</span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>    <span class="at">plotLayout =</span> <span class="st">&quot;pointjitter&quot;</span> ) <span class="sc">+</span> ornate</span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a><span class="co"># transform the new plot into a visual object</span></span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>plt1 <span class="ot">&lt;-</span> <span class="fu">ggplotGrob</span>(plt1)</span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a><span class="co"># superimpose the grobs onto an empty ggplot </span></span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt1) <span class="sc">+</span> </span>
+<span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt2) <span class="sc">+</span> </span>
+<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt3)</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 3b. Jittered dots showing mean glucose level and 95% reference intervals with 95% confidence intervals." src="data:image/png;base64,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" alt="Figure 3b. Jittered dots showing mean glucose level and 95% reference intervals with 95% confidence intervals." />
+<div class="figcaption"><strong>Figure 3b</strong>. Jittered dots
+showing mean glucose level and 95% reference intervals with 95%
+confidence intervals.</div>
+</div>
+<p>As seen, it is now easy to see the individuals from the sample and
+that most of them are indeed within the reference intervals.</p>
+<p>A more elaborate layout, although maybe redundant with the RI, is the
+<code>pointjitterviolin</code> as done in the next example.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># redo plt1; the other 2 are still in memory</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>plt1 <span class="ot">&lt;-</span> <span class="fu">superb</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>    gl <span class="sc">~</span> concentration,</span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>    glucoselevels, </span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">&quot;mean&quot;</span>, </span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>    <span class="at">errorbar  =</span> <span class="st">&quot;RI&quot;</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>    <span class="at">gamma     =</span> <span class="fl">0.95</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>    <span class="at">errorbarParams =</span> <span class="fu">list</span>(<span class="at">width =</span> <span class="fl">0.0</span>, <span class="at">linewidth =</span> <span class="fl">1.5</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>                          <span class="at">position =</span> <span class="fu">position_nudge</span>( <span class="fl">0.0</span>) ),</span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>    <span class="at">plotLayout =</span> <span class="st">&quot;pointjitterviolin&quot;</span> ) <span class="sc">+</span> ornate</span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="co"># transform the three plots into visual objects</span></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>plt1 <span class="ot">&lt;-</span> <span class="fu">ggplotGrob</span>(plt1)</span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a><span class="co"># you may superimpose the grobs onto an empty ggplot </span></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt1) <span class="sc">+</span> </span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt2) <span class="sc">+</span> </span>
+<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt3)</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 3c. Jittered dots and violins showing mean glucose level and 95% reference intervals with 95% confidence intervals of the tips’ position." src="data:image/png;base64,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" alt="Figure 3c. Jittered dots and violins showing mean glucose level and 95% reference intervals with 95% confidence intervals of the tips’ position." />
+<div class="figcaption"><strong>Figure 3c</strong>. Jittered dots and
+violins showing mean glucose level and 95% reference intervals with 95%
+confidence intervals of the tips’ position.</div>
+</div>
+</div>
+<div id="reference-intervals-vs.-confidence-intervals-of-the-means" class="section level2">
+<h2>Reference intervals vs. confidence intervals of the means</h2>
+<p>As one last example, we want to show the difference between the
+reference intervals and the confidence intervals of a summary statistic,
+here the mean.</p>
+<p>To that end, we can create a fourth plot showing the confidence
+interval of the means with</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>plt4 <span class="ot">&lt;-</span> <span class="fu">superb</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>    gl <span class="sc">~</span> concentration,</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>    glucoselevels, </span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">&quot;mean&quot;</span>, </span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>    <span class="at">errorbar  =</span> <span class="st">&quot;CI&quot;</span>,  <span class="co"># just the regular CI of the mean</span></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>    <span class="at">errorbarParams =</span> <span class="fu">list</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">linewidth =</span> <span class="fl">1.5</span>, <span class="at">color =</span> <span class="st">&quot;blue&quot;</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>                          <span class="at">position =</span> <span class="fu">position_nudge</span>( <span class="fl">0.00</span>) ),</span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>    <span class="at">gamma     =</span> <span class="fl">0.95</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a>    <span class="at">plotLayout =</span> <span class="st">&quot;line&quot;</span> ) <span class="sc">+</span> ornate <span class="sc">+</span> <span class="fu">makeTransparent</span>()</span></code></pre></div>
+<p>This plot also has transparent theme as it will superimposed on the
+previous three plots:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co"># transform that plot too into visual objects</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>plt4 <span class="ot">&lt;-</span> <span class="fu">ggplotGrob</span>(plt4)</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a><span class="co"># superimpose the grobs onto an empty ggplot </span></span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt1) <span class="sc">+</span> </span>
+<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt2) <span class="sc">+</span> </span>
+<span id="cb20-8"><a href="#cb20-8" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt3) <span class="sc">+</span></span>
+<span id="cb20-9"><a href="#cb20-9" tabindex="-1"></a>    <span class="fu">annotation_custom</span>(<span class="at">grob=</span>plt4)</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 3d. Jittered dots and violins showing mean glucose level +-95% confidence intervals of the mean, and 95% reference intervals with 95% confidence intervals." src="data:image/png;base64,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" alt="Figure 3d. Jittered dots and violins showing mean glucose level +-95% confidence intervals of the mean, and 95% reference intervals with 95% confidence intervals." />
+<div class="figcaption"><strong>Figure 3d</strong>. Jittered dots and
+violins showing mean glucose level +-95% confidence intervals of the
+mean, and 95% reference intervals with 95% confidence intervals.</div>
+</div>
+<p>As seen in blue, the confidence interval of the means have much
+shorter intervals than the reference interval. This is ok (or should I
+say, <em>normal</em>): Both intervals represent very different things.
+Also, the interval widths of the CI of the mean are shorter than the
+interval widths of the CI or the RI tips for two reasons: (1) the RI
+tips are based on 90% confidence levels; (2) a central tendency
+statistic is easier to estimate than an extreme quantile statistic.</p>
+</div>
+<div id="in-summary" class="section level2">
+<h2>In summary</h2>
+<p>Reference intervals are useful to depict the population as a whole.
+It is not an error bar in the sense that it does not represent the error
+for the estimation of a statistic. Instead, it is an illustration of the
+individuals’ possible scores.</p>
+<p>Note that Reference intervals <strong>must not</strong> be used in
+conjunction with adjustments. These adjustments are used when conditions
+are compared to other conditions. Reference intervals are not
+comparative statistics, they show the extend of the sample, irrespective
+of what the other samples might look like.</p>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
+<div id="ref-f20" class="csl-entry">
+Finnegan, D. (2020). <em>referenceIntervals: Reference intervals</em>.
+Retrieved from <a href="https://CRAN.R-project.org/package=referenceIntervals">https://CRAN.R-project.org/package=referenceIntervals</a>
+</div>
+<div id="ref-htc14" class="csl-entry">
+Harding, B., Tremblay, C., &amp; Cousineau, D. (2014). Standard errors:
+A review and evaluation of standard error estimators using monte carlo
+simulations. <em>The Quantitative Methods for Psychology</em>,
+<em>10</em>(2), 107–123.
+</div>
+<div id="ref-nccls00" class="csl-entry">
+NCCLS. (2000). <em>How to define and determine reference intervals in
+the clinical laboratory; approved guideline - second edition.</em> (No.
+NCCLS document C28-A2). 940 West Valley Road, Suite 1400, Wayne,
+Pennsylvania 19087-1898, USA.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

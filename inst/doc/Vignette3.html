@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Why use correlation-adjusted confidence intervals?</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Why use correlation-adjusted confidence
+intervals?</h1>
+
+
+
+<p>In paired-sample designs —also called within-subject designs— the
+same participants are measured more than once. In that case, asking
+whether a factor influenced the scores is the same as asking if the
+factor influenced all the participants. If all the participants turn out
+to be influenced in the same manner, it can be safely concluded that the
+factor influenced the group of participants.</p>
+<div id="an-example" class="section level2">
+<h2>An example</h2>
+<p>Consider a study trying to establish the benefit of using exercises
+to improve visuo-spatial abilities onto scores in statistics reasoning,
+as measured by a standardized test with scores ranging from 50 to 150.
+The design is a within-subject design, specifically a pre-exercises
+measure and a post-exercises measure of statistics reasoning.</p>
+<p>The data are available in <code>dataFigure2</code>; here is a
+snapshot of it</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">head</span>(dataFigure2)</span></code></pre></div>
+<pre><code>##   id pre post diff
+## 1  1 105  128   23
+## 2  2  96   96    0
+## 3  3  88  102   14
+## 4  4  80   88    8
+## 5  5  90   83   -7
+## 6  6  86   99   13</code></pre>
+<p>There is a large variation in the scores obtained and as such a
+<em>t</em> test where the scores are treated as independent will fail to
+detect a difference:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">t.test</span>(dataFigure2<span class="sc">$</span>pre, dataFigure2<span class="sc">$</span>post, <span class="at">var.equal=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## 
+##  Two Sample t-test
+## 
+## data:  dataFigure2$pre and dataFigure2$post
+## t = -1.1741, df = 48, p-value = 0.2462
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -13.562724   3.562724
+## sample estimates:
+## mean of x mean of y 
+##       100       105</code></pre>
+<p>However, when the proper, paired-sample t-test is used, we find that
+the difference is quite important:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">t.test</span>(dataFigure2<span class="sc">$</span>pre, dataFigure2<span class="sc">$</span>post, <span class="at">var.equal=</span><span class="cn">TRUE</span>, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## 
+##  Paired t-test
+## 
+## data:  dataFigure2$pre and dataFigure2$post
+## t = -2.9046, df = 24, p-value = 0.007776
+## alternative hypothesis: true mean difference is not equal to 0
+## 95 percent confidence interval:
+##  -8.552864 -1.447136
+## sample estimates:
+## mean difference 
+##              -5</code></pre>
+<p>What is going on? how can we make a plot that properly display this
+difference?</p>
+</div>
+<div id="a-few-words-on-the-underlying-theory-optional" class="section level2">
+<h2>A few words on the underlying theory (optional)</h2>
+<p>Let’s examine the data using a plot in which each participant’s
+scores are shown with a line. We get the following:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(reshape2)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co"># first transform the data in long format; the pre-post scores will go into column &quot;variable&quot;</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>dataFigure2long <span class="ot">&lt;-</span> <span class="fu">melt</span>(dataFigure2, <span class="at">id=</span><span class="st">&quot;id&quot;</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co"># add transparency when pre is smaller or equal to post</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>dataFigure2long<span class="sc">$</span>trans <span class="ot">=</span> <span class="fu">ifelse</span>(dataFigure2<span class="sc">$</span>pre <span class="sc">&lt;=</span> dataFigure2<span class="sc">$</span>post,<span class="fl">0.9</span>,<span class="fl">1.0</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co"># make a plot, with transparent lines when the score increased</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>dataFigure2long, <span class="fu">aes</span>(<span class="at">x=</span>variable, <span class="at">y=</span>value, <span class="at">group=</span>id, <span class="at">alpha =</span> trans)) <span class="sc">+</span> </span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>    <span class="fu">geom_line</span>( ) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>    <span class="fu">coord_cartesian</span>( <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">70</span>,<span class="dv">150</span>) ) <span class="sc">+</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fl">102.5</span>, <span class="at">slope =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="st">&quot;red&quot;</span>, <span class="at">linetype=</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 1. Representation of the individual participants" src="data:image/png;base64,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" alt="Figure 1. Representation of the individual participants" />
+<div class="figcaption"><strong>Figure 1</strong>. Representation of the
+individual participants</div>
+</div>
+<p>As seen, except for 5 participants, a vast majority of the
+participants have an upward trend in their results. Thus, this upward
+trend is probably a reality in this dataset.</p>
+<div id="centering-the-participants-to-better-see-the-trend" class="section level3">
+<h3>Centering the participants to better see the trend</h3>
+<p>One solution used in <span class="citation">Cousineau (2005)</span>
+is to center the participants’ data on the participants’ mean. It
+consists in computing for each participant their mean score and replace
+that participant’s mean score with the overall mean. With this
+manipulation, all the participants will now hover around the overall
+mean (here 102.5, shown with a red dashed line).</p>
+<p>The following realizes this <em>subject-centered</em> plot for each
+participant.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># use subjectCenteringTransform function </span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">library</span>(superb)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> <span class="fu">subjectCenteringTransform</span>(dataFigure2, <span class="fu">c</span>(<span class="st">&quot;pre&quot;</span>,<span class="st">&quot;post&quot;</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co"># tranform into long format</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="fu">library</span>(reshape2)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>dl2 <span class="ot">&lt;-</span> <span class="fu">melt</span>(df2, <span class="at">id=</span><span class="st">&quot;id&quot;</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co"># make the plot</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>dl2, <span class="fu">aes</span>(<span class="at">x=</span>variable, <span class="at">y=</span>value, <span class="at">colour=</span>id, <span class="at">group=</span>id)) <span class="sc">+</span> <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>    <span class="fu">coord_cartesian</span>( <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">70</span>,<span class="dv">150</span>) ) <span class="sc">+</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fl">102.5</span>, <span class="at">slope =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="st">&quot;red&quot;</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">linetype=</span><span class="dv">2</span>)</span></code></pre></div>
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+## ℹ Please use `linewidth` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<div class="float">
+<img role="img" aria-label="Figure 2. Representation of the subject-centered individual participants" src="data:image/png;base64,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" alt="Figure 2. Representation of the subject-centered individual participants" />
+<div class="figcaption"><strong>Figure 2</strong>. Representation of the
+<em>subject-centered</em> individual participants</div>
+</div>
+<p>Here again, we see that for 5 participants, their scores went down.
+For the 20 remaining ones, the trend is upward. Thus, there is clear
+tendency for the exercices to be beneficial.</p>
+<p>Running the adequate <em>paired</em> <em>t</em> test, we find indeed
+that the difference is strongly significant (t(24) = 2.9, p = .008):</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">t.test</span>(dataFigure2<span class="sc">$</span>pre, dataFigure2<span class="sc">$</span>post, <span class="at">paired=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## 
+##  Paired t-test
+## 
+## data:  dataFigure2$pre and dataFigure2$post
+## t = -2.9046, df = 24, p-value = 0.007776
+## alternative hypothesis: true mean difference is not equal to 0
+## 95 percent confidence interval:
+##  -8.552864 -1.447136
+## sample estimates:
+## mean difference 
+##              -5</code></pre>
+</div>
+<div id="what-is-the-impact-on-confidence-intervals" class="section level3">
+<h3>What is the impact on confidence intervals?</h3>
+<p>The above suggests that within-subject designs can be much more
+powerful than between- subject design. As long as there is a general
+trend visible in most participants, the paired design will afford more
+statistical power. How to we know that there is a general trend? An easy
+solution is to compute the correlation across the pairs of scores.</p>
+<p>In R, you can run the following:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">cor</span>(dataFigure2<span class="sc">$</span>pre, dataFigure2<span class="sc">$</span>post)</span></code></pre></div>
+<pre><code>## [1] 0.836611</code></pre>
+<p>and you find out that in the present dataset, correlation is actually
+quite high, with <span class="math inline">\(r \approx .8\)</span>.
+Whenever correlation is positive, statistical power benefits from
+correlation.</p>
+<p>Because increased power means higher level of precision, the error
+bars should be shortened by positive correlation. Estimating the
+adjusted length of the error bars from correlation is a process called
+<strong>decorrelation</strong> <span class="citation">(Cousineau,
+2019)</span>.</p>
+<p>To this date, three techniques have been proposed to decorrelate the
+measures.</p>
+<ul>
+<li><p><code>CM</code>: This method uses <em>subject-centering</em>
+followed by a bias-correction step (otherwise the error bars are
+slightly overestimated) <span class="citation">(Cousineau, 2005; Morey,
+2008)</span>.</p></li>
+<li><p><code>LM</code>: This method also uses <em>subject-centering</em>
+and bias-correction but when there are more than two measurements, it
+also equalizes the length of the error bars using a technique akin to
+pooled standard deviation measure <span class="citation">(Loftus &amp;
+Masson, 1994)</span>.</p></li>
+<li><p><code>CA</code>: this is the newest proposal. It directly uses
+the correlation (or the mean pairwise correlation when there are more
+than two measurement) to adjust the error bar length. In a nutshell, the
+error bar length are adjusted using a multiplicative term <span class="math inline">\(\sqrt{1-r}\)</span>. As an example, when $ r =
+.8$, the adjustment is <span class="math inline">\(\sqrt{1-.8} =
+0.44\)</span>. That means that the error bars are 44% the length of the
+unadjusted error bars (that is, less than half).</p></li>
+</ul>
+<p>Whichever method you choose have very little bearing on the actual
+result. As shown in <span class="citation">Cousineau (2019)</span>, all
+three methods are based on the same general concepts and they generate
+very little difference in the amount of adjustments.</p>
+<p>In the present dataset, the error bar are more than shorten by half!
+which clearly shows the benefit of the within-subject design on
+precision.</p>
+</div>
+</div>
+<div id="getting-a-plot" class="section level2">
+<h2>Getting a plot</h2>
+<div id="making-it-simple" class="section level3">
+<h3>Making it simple</h3>
+<p>With <code>suberb</code>, all the decorrelation techniques are
+available using the adjustment <code>decorrelation</code> <span class="citation">(Cousineau, Goulet, &amp; Harding, 2021)</span>.</p>
+<p>The simplest code is the following:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">superb</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>    <span class="fu">cbind</span>(pre, post)<span class="sc">~</span> ., <span class="co"># no between-group factor</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>    dataFigure2, </span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>    <span class="at">WSFactors    =</span> <span class="st">&quot;Moment(2)&quot;</span>, </span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>    <span class="at">adjustments =</span> <span class="fu">list</span>(</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>                    <span class="at">purpose =</span> <span class="st">&quot;difference&quot;</span>, </span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>                    <span class="at">decorrelation =</span> <span class="st">&quot;CA&quot;</span>    <span class="do">## NEW! use a decorrelation technique</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>    ), </span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>    <span class="at">plotLayout  =</span> <span class="st">&quot;line&quot;</span> )</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 3a. Means and difference and correlation-adjusted 95% confidence intervals" src="data:image/png;base64,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" alt="Figure 3a. Means and difference and correlation-adjusted 95% confidence intervals" />
+<div class="figcaption"><strong>Figure 3a</strong>. Means and difference
+and correlation-adjusted 95% confidence intervals</div>
+</div>
+<p>Alternatively, if the data are available in long form, you can
+specify that the measurements are nested within a subject identifier,
+here the <code>id</code> columm, with</p>
+<pre><code>superb(
+    value ~ variable | id, # id identifies the within-subject measurements
+    dataFigure2long, 
+    adjustments = list(
+                    purpose = &quot;difference&quot;, 
+                    decorrelation = &quot;CA&quot;    ## NEW! use a decorrelation technique
+    ), 
+    plotLayout  = &quot;line&quot; )</code></pre>
+<p>This will result in a basic plot, but what matters is that the
+confidence intervals are adjusted so that you can compare bars even if
+they are repeated measures. Note that the confidence interval of one
+point does not contain the other point, suggesting, as it should be, a
+significant differencee.</p>
+</div>
+<div id="refining-the-plots" class="section level3">
+<h3>Refining the plots</h3>
+<p>With the following code, we can decorate the plot a little bit, and
+show side-by-side both the unadjusted plot (which give an erroneous
+result) and the adjusted plot.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">options</span>(<span class="at">superb.feedback =</span> <span class="st">&#39;none&#39;</span>) <span class="co"># shut down &#39;warnings&#39; and &#39;design&#39; interpretation messages</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="do">## realize the plot with unadjusted (left) and ajusted (right) 95\% confidence intervals</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>plt2a <span class="ot">&lt;-</span> <span class="fu">superb</span>(</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>        <span class="fu">cbind</span>(pre, post) <span class="sc">~</span> .,</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>        dataFigure2, </span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>        <span class="at">WSFactors    =</span> <span class="st">&quot;Moment(2)&quot;</span>, </span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>        <span class="at">adjustments =</span> <span class="fu">list</span>(<span class="at">purpose =</span> <span class="st">&quot;difference&quot;</span>), </span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>        <span class="at">plotLayout  =</span> <span class="st">&quot;line&quot;</span> ) <span class="sc">+</span> </span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;Group&quot;</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;Score&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Difference-adjusted</span><span class="sc">\n</span><span class="st">95% confidence intervals&quot;</span>) <span class="sc">+</span></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>    <span class="fu">coord_cartesian</span>( <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">85</span>,<span class="dv">115</span>) ) <span class="sc">+</span></span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>    <span class="fu">theme_gray</span>(<span class="at">base_size=</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a>    <span class="fu">scale_x_discrete</span>(<span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="st">&quot;Collaborative games&quot;</span>, <span class="st">&quot;2&quot;</span> <span class="ot">=</span> <span class="st">&quot;Unstructured activity&quot;</span>))</span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a>plt2b <span class="ot">&lt;-</span> <span class="fu">superb</span>(</span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>        <span class="fu">cbind</span>(pre, post) <span class="sc">~</span> .,</span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a>        dataFigure2, </span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a>        <span class="at">WSFactors    =</span> <span class="st">&quot;Moment(2)&quot;</span>, </span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a>        <span class="at">adjustments =</span> <span class="fu">list</span>(<span class="at">purpose =</span> <span class="st">&quot;difference&quot;</span>, <span class="at">decorrelation =</span> <span class="st">&quot;CA&quot;</span>),  <span class="co">#only difference</span></span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a>        <span class="at">plotLayout  =</span> <span class="st">&quot;line&quot;</span> ) <span class="sc">+</span> </span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;Group&quot;</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;Score&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Correlation and difference-adjusted</span><span class="sc">\n</span><span class="st">95% confidence intervals&quot;</span>) <span class="sc">+</span></span>
+<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a>    <span class="fu">coord_cartesian</span>( <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">85</span>,<span class="dv">115</span>) ) <span class="sc">+</span> </span>
+<span id="cb16-25"><a href="#cb16-25" tabindex="-1"></a>    <span class="fu">theme_gray</span>(<span class="at">base_size=</span><span class="dv">10</span>) <span class="sc">+</span></span>
+<span id="cb16-26"><a href="#cb16-26" tabindex="-1"></a>    <span class="fu">scale_x_discrete</span>(<span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="st">&quot;Collaborative games&quot;</span>, <span class="st">&quot;2&quot;</span> <span class="ot">=</span> <span class="st">&quot;Unstructured activity&quot;</span>))</span>
+<span id="cb16-27"><a href="#cb16-27" tabindex="-1"></a>plt2  <span class="ot">&lt;-</span> <span class="fu">grid.arrange</span>(plt2a,plt2b,<span class="at">ncol=</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 3b. Means and 95% confidence intervals on raw data (left) and on decorrelated data (right)" src="data:image/png;base64,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" alt="Figure 3b. Means and 95% confidence intervals on raw data (left) and on decorrelated data (right)" />
+<div class="figcaption"><strong>Figure 3b</strong>. Means and 95%
+confidence intervals on raw data (left) and on decorrelated data
+(right)</div>
+</div>
+<p>In the above plot, I used <code>decorrelation = &quot;CA&quot;</code>.
+Alternatively, you could use <code>decorrelation = &quot;UA&quot;</code> or
+``decorrelation = “CM”). When there is only two conditions, all the
+techniques return identical error bars.</p>
+</div>
+<div id="illustrating-the-various-decorrelatin-techniques." class="section level3">
+<h3>Illustrating the various decorrelatin techniques.</h3>
+<p>As another example illustrating the differences between the
+techniques, I generated random data for 5 measures with an amount of
+correlation of 0.8 in the population. In Figure 4 below, all error bars
+are superimposed on the same plot. As seen, there is only minor
+differences between the three techniques. The green lines all have the
+same length; this is the main characteristic of the Loftus and Masson
+approach, in contrast with the other two techniques.</p>
+<div class="float">
+<img role="img" aria-label="Figure 4. All three decorelation techniques on the same plot along with un-decorrelated error bars" src="data:image/png;base64,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" alt="Figure 4. All three decorelation techniques on the same plot along with un-decorrelated error bars" />
+<div class="figcaption"><strong>Figure 4</strong>. All three
+decorelation techniques on the same plot along with un-decorrelated
+error bars</div>
+</div>
+</div>
+<div id="illustrating-individual-differences" class="section level3">
+<h3>Illustrating individual differences</h3>
+<p>In <code>superb</code>, it is possible to ask a certain type of plot.
+The <code>plotLayout</code> used so far is <code>&quot;line&quot;</code> (the
+default is <code>&quot;bar&quot;</code>). Another basic style is
+<code>&quot;point&quot;</code> (no line connecting the means).</p>
+<p>Other types of plot exists that are apt at showing the summary
+statistics but also the individual scores (the <a href="https://dcousin3.github.io/superb/articles/Vignette6.html">6th
+Vignette</a> shows how to develop custom-made layouts). For illustrating
+individual differences, a style proposed is
+<code>pointindividualline</code> which — as per Figure 1— will show the
+individual scores along with the summary statistics and the error bars.
+For example:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">superb</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>    <span class="fu">cbind</span>(pre, post) <span class="sc">~</span> ., </span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>    dataFigure2, </span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>    <span class="at">WSFactors   =</span> <span class="st">&quot;Moment(2)&quot;</span>, </span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>    <span class="at">adjustments =</span> <span class="fu">list</span>(<span class="at">purpose =</span> <span class="st">&quot;difference&quot;</span>, <span class="at">decorrelation =</span> <span class="st">&quot;CM&quot;</span>), </span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>    <span class="at">plotLayout  =</span> <span class="st">&quot;pointindividualline&quot;</span> ) <span class="sc">+</span> </span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">&quot;Group&quot;</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;Score&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">subtitle=</span><span class="st">&quot;Correlation- and Difference-adjusted</span><span class="sc">\n</span><span class="st">95% confidence intervals&quot;</span>) <span class="sc">+</span></span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a><span class="fu">coord_cartesian</span>( <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">70</span>,<span class="dv">150</span>) ) <span class="sc">+</span></span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a><span class="fu">theme_bw</span>(<span class="at">base_size=</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a><span class="fu">scale_x_discrete</span>(<span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="st">&quot;Collaborative games&quot;</span>, <span class="st">&quot;2&quot;</span> <span class="ot">=</span> <span class="st">&quot;Unstructured activity&quot;</span>))</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 5. Means and 95% confidence intervals along with individual scores depicted as lines" src="data:image/png;base64,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" alt="Figure 5. Means and 95% confidence intervals along with individual scores depicted as lines" />
+<div class="figcaption"><strong>Figure 5</strong>. Means and 95%
+confidence intervals along with individual scores depicted as
+lines</div>
+</div>
+<p>When the repeated-measure design involves only two measurements, a
+nice plot is a corset plot, which is a mixture of violin plot and
+individuallines plot. You can add the option <code>colorize=TRUE</code>
+to discriminate the participants whose score decreased from those whose
+score remained flat or increased. It is obtained with</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">superb</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>    <span class="fu">cbind</span>(pre, post) <span class="sc">~</span> ., </span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>    dataFigure2, </span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>    <span class="at">WSFactors   =</span> <span class="st">&quot;Moment(2)&quot;</span>, </span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>    <span class="at">adjustments =</span> <span class="fu">list</span>(<span class="at">purpose =</span> <span class="st">&quot;difference&quot;</span>, <span class="at">decorrelation =</span> <span class="st">&quot;CM&quot;</span>), </span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>    <span class="at">plotLayout  =</span> <span class="st">&quot;corset&quot;</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>    <span class="at">lineParams =</span> <span class="fu">list</span>(<span class="at">colorize=</span><span class="st">&quot;bySlope&quot;</span>), </span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>    <span class="at">violinParams =</span> <span class="fu">list</span>(<span class="at">fill=</span><span class="st">&quot;green&quot;</span>, <span class="at">alpha =</span> .<span class="dv">2</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>) <span class="sc">+</span> </span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">&quot;Group&quot;</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;Score&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">subtitle=</span><span class="st">&quot;Correlation- and Difference-adjusted</span><span class="sc">\n</span><span class="st">95% confidence intervals&quot;</span>) <span class="sc">+</span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="fu">coord_cartesian</span>( <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">70</span>,<span class="dv">150</span>) ) <span class="sc">+</span></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="fu">theme_bw</span>(<span class="at">base_size=</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a><span class="fu">scale_x_discrete</span>(<span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="st">&quot;Collaborative games&quot;</span>, <span class="st">&quot;2&quot;</span> <span class="ot">=</span> <span class="st">&quot;Unstructured activity&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a><span class="fu">scale_color_manual</span>(<span class="st">&#39;Direction</span><span class="sc">\n</span><span class="st"> of change&#39;</span>, <span class="at">values=</span><span class="fu">c</span>(<span class="st">&quot;blue&quot;</span>,<span class="st">&quot;red&quot;</span>), <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&#39;decreasing&#39;</span>, <span class="st">&#39;increasing&#39;</span>)) <span class="sc">+</span></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">legend.position=</span><span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.8</span>), <span class="at">panel.border =</span> <span class="fu">element_blank</span>(), <span class="at">legend.background =</span>  <span class="fu">element_blank</span>() ) </span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 5. Means and 95% confidence intervals along with individual scores depicted as lines" src="data:image/png;base64,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" alt="Figure 5. Means and 95% confidence intervals along with individual scores depicted as lines" />
+<div class="figcaption"><strong>Figure 5</strong>. Means and 95%
+confidence intervals along with individual scores depicted as
+lines</div>
+</div>
+</div>
+</div>
+<div id="in-conclusion" class="section level2">
+<h2>In conclusion</h2>
+<p>The major obstacle to the use of adjusted error bars was the
+difficulty to obtain them. None of the statistical software (e.g., SPSS,
+SAS) provide these adjustments. A way around is to compute these
+manually. Although not that complicated, it requires manipulations,
+whether they are done in EXCEL, or through macros <span class="citation">(e.g., WSPlot, O’Brien &amp; Cousineau,
+2014)</span>.</p>
+<p>The present function renders all the adjustments a mere option in a
+function.</p>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
+<div id="ref-c05" class="csl-entry">
+Cousineau, D. (2005). Confidence intervals in within-subject designs: A
+simpler solution to <span>L</span>oftus and <span>M</span>asson’s
+method. <em>Tutorials in Quantitative Methods for Psychology</em>,
+<em>1</em>, 42–45. <a href="https://doi.org/10.20982/tqmp.01.1.p042">https://doi.org/10.20982/tqmp.01.1.p042</a>
+</div>
+<div id="ref-c19" class="csl-entry">
+Cousineau, D. (2019). Correlation-adjusted standard errors and
+confidence intervals for within-subject designs: A simple multiplicative
+approach. <em>The Quantitative Methods for Psychology</em>, <em>15</em>,
+226–241. <a href="https://doi.org/10.20982/tqmp.15.3.p226">https://doi.org/10.20982/tqmp.15.3.p226</a>
+</div>
+<div id="ref-cgh21" class="csl-entry">
+Cousineau, D., Goulet, M.-A., &amp; Harding, B. (2021). Summary plots
+with adjusted error bars: The superb framework with an implementation in
+<span>R</span>. <em>Advances in Methods and Practices in Psychological
+Science</em>, <em>4</em>, 1–18. <a href="https://doi.org/10.1177/25152459211035109">https://doi.org/10.1177/25152459211035109</a>
+</div>
+<div id="ref-lm94" class="csl-entry">
+Loftus, G. R., &amp; Masson, M. E. J. (1994). Using confidence intervals
+in within-subject designs. <em>Psychonomic Bulletin &amp; Review</em>,
+<em>1</em>, 476–490. <a href="https://doi.org/10.3758/BF03210951">https://doi.org/10.3758/BF03210951</a>
+</div>
+<div id="ref-m08" class="csl-entry">
+Morey, R. D. (2008). Confidence intervals from normalized data: A
+correction to <span>C</span>ousineau (2005). <em>Tutorials in
+Quantitative Methods for Psychology</em>, <em>4</em>, 61–64. <a href="https://doi.org/10.20982/tqmp.04.2.p061">https://doi.org/10.20982/tqmp.04.2.p061</a>
+</div>
+<div id="ref-oc14" class="csl-entry">
+O’Brien, F., &amp; Cousineau, D. (2014). Representing error bars in
+within-subject designs in typical software packages. <em>The
+Quantitative Methods for Psychology</em>, <em>10</em>(1), 56–67. <a href="https://doi.org/10.20982/tqmp.10.1.p056">https://doi.org/10.20982/tqmp.10.1.p056</a>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

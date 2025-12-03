@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>(advanced) Non-factorial within-subject designs in superb</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">(advanced) Non-factorial within-subject
+designs in <code>superb</code></h1>
+
+
+
+<p>In this vignette, we show how to display a dataset with a non-full
+factorial within-subject design. A non-factorial design is when all the
+levels of a first factor are not fully crossed with all the levels of a
+second factor. For example, if you have a design <span class="math inline">\(A(4) \times B(4)\)</span>, you would expect in
+total 16 levels in a full-factorial design. If there are fewer than 16
+levels, it would mean that some combinations were not measured. This
+could be because these conditions are uninteresting or impossible.</p>
+<p>In a between group design, non full-factorial designs are not
+problematic: the columns contains the level of the factors. If some
+levels are missing, it just results in a shorter data file. All the
+levels present are fully identifiable as the levels are in these
+columns.</p>
+<p>In within-subject design, this is a different matter: the columns
+must be matched to a condition. If some columns are missing,
+<code>superb</code> cannot guess which levels are present and which are
+absent. It is therefore necessary to specify what levels the columns
+represent.</p>
+<div id="an-example" class="section level2">
+<h2>An example</h2>
+<p>Consider a case where participants are presented with strings of 1 to
+4 letters for which a decision must be made, e.g., <em>Is this a real
+word?</em>. The strings can be composed of a variable number of letters
+between 1 and 4, but also, with a variable number of upper-case letters,
+between 1 and 4. All the combinations of string length and uppercase are
+presented within subjects.</p>
+<p>This design cannot be a a full factorial design. Indeed, when 1
+letter is presented, it is not possible that the number of upper-case
+letter be 2, 3 or 4.</p>
+<p>To handle that case, it is possible to specify a
+<code>WSDesign</code> argument. By default, this argument is
+<code>&quot;fullfactorial&quot;</code>. When not full factorial, a list is given
+with, for each variables used as dependent variable, the levels of the
+factors they correspond.</p>
+<p>Consider this table with number of letters presented (from 1 to 4),
+and number of upper-case letters (from 1 to all). The valid cases
+are</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Nletters</th>
+<th>Nuppercase</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>var1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>var2</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>var3</td>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>var4</td>
+<td>4</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>var5</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>var6</td>
+<td>3</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>var7</td>
+<td>4</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>var8</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>var9</td>
+<td>4</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>var10</td>
+<td>4</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<p>There are 10 conditions (instead of the <span class="math inline">\(4
+\times 4\)</span> if the design had been full factorial). The table
+provide for each variables the levels of the two factors they correspond
+to.</p>
+</div>
+<div id="informing-superb-of-a-non-full-factorial-within-subject-design" class="section level2">
+<h2>Informing <code>superb</code> of a non-full factorial within-subject
+design</h2>
+<p>In <code>superb()</code>, <code>superbPlot()</code> or
+<code>superbData()</code>, we indicate non full factorial design
+with:</p>
+<pre><code>WSFactors = c(&quot;Nletters&quot;,&quot;Nuppercase&quot;),
+variables = c(&quot;var1&quot;,&quot;var2&quot;,&quot;var3&quot;,&quot;var4&quot;,&quot;var5&quot;,&quot;var6&quot;,
+                &quot;var7&quot;,&quot;var8&quot;,&quot;var9&quot;,&quot;var10&quot;),
+WSDesign  = list(c(1,1), c(2,1), c(3,1), c(4,1), c(2,2), c(3,2),
+                 c(4,2), c(3,3), c(4,3), c(4,4)),</code></pre>
+</div>
+<div id="returning-to-the-example" class="section level2">
+<h2>Returning to the example</h2>
+<p>let’s try this with a random data set. It will simulate response
+times for participants to response <strong>Word</strong> or **Non-word*
+to the presented strings. As <code>GRD()</code> can only generate full
+factorial design, we will delete some columns aftewards.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>Fulldta <span class="ot">&lt;-</span> dta <span class="ot">&lt;-</span> <span class="fu">GRD</span>( </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                <span class="at">WSFactors =</span> <span class="fu">c</span>(<span class="st">&quot;Nletters(4)&quot;</span>,<span class="st">&quot;Nuppercase(4)&quot;</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                <span class="at">Effects =</span> <span class="fu">list</span>(<span class="st">&quot;Nletters&quot;</span> <span class="ot">=</span> <span class="fu">slope</span>(<span class="dv">25</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>                               <span class="st">&quot;Nuppercase&quot;</span> <span class="ot">=</span> <span class="fu">slope</span>(<span class="sc">-</span><span class="dv">25</span>) ),</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>                <span class="at">Population =</span> <span class="fu">list</span>(<span class="at">mean =</span> <span class="dv">400</span>, <span class="at">stddev =</span> <span class="dv">50</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>)</span></code></pre></div>
+<p>This dataset simulate an effect of the number of letters (increasing
+response times by 25 ms for each additional letter) and of the number of
+uppercase letters (decreasing response times by 25 ms for each
+additional uppercase letter).</p>
+<p>The full data can be plotted without any difficulty with
+<code>superbPlot()</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">superb</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>    <span class="fu">crange</span>(DV.<span class="fl">1.1</span>, DV.<span class="fl">4.4</span>) <span class="sc">~</span> .,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    Fulldta,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="at">WSFactors =</span> <span class="fu">c</span>(<span class="st">&quot;Nletters(4)&quot;</span>,<span class="st">&quot;Nuppercase(4)&quot;</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="at">plotLayout=</span><span class="st">&quot;line&quot;</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 1. Mean response times to say Word or Non-word." src="data:image/png;base64,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" alt="Figure 1. Mean response times to say Word or Non-word." />
+<div class="figcaption"><strong>Figure 1</strong>. Mean response times
+to say <strong>Word</strong> or <strong>Non-word</strong>.</div>
+</div>
+<p>To simulate a more realistic dataset, we must remove the impossible
+conditions:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># destroying the six impossible columns</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>dta<span class="sc">$</span>DV.<span class="fl">1.2</span> <span class="ot">=</span> <span class="cn">NULL</span> <span class="co"># e.g., the condition showing one letter with 2 upper-cases.</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>dta<span class="sc">$</span>DV.<span class="fl">1.3</span> <span class="ot">=</span> <span class="cn">NULL</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>dta<span class="sc">$</span>DV.<span class="fl">1.4</span> <span class="ot">=</span> <span class="cn">NULL</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>dta<span class="sc">$</span>DV.<span class="fl">2.3</span> <span class="ot">=</span> <span class="cn">NULL</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>dta<span class="sc">$</span>DV.<span class="fl">2.4</span> <span class="ot">=</span> <span class="cn">NULL</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>dta<span class="sc">$</span>DV.<span class="fl">3.4</span> <span class="ot">=</span> <span class="cn">NULL</span></span></code></pre></div>
+<p>after which the plot can be performed:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">superb</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>    <span class="fu">crange</span>(DV.<span class="fl">1.1</span>, DV.<span class="fl">4.4</span>) <span class="sc">~</span> .,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    dta,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="at">WSFactors =</span> <span class="fu">c</span>(<span class="st">&quot;Nletters(4)&quot;</span>,<span class="st">&quot;Nuppercase(4)&quot;</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">WSDesign  =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>),  <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>),  <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">2</span>),  <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>                     <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">2</span>), <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">3</span>),  <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>)),</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>    <span class="at">plotLayout=</span><span class="st">&quot;line&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>)</span></code></pre></div>
+<div class="float">
+<img role="img" aria-label="Figure 2. Mean response times to say Word or Non-word." src="data:image/png;base64,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" alt="Figure 2. Mean response times to say Word or Non-word." />
+<div class="figcaption"><strong>Figure 2</strong>. Mean response times
+to say <strong>Word</strong> or <strong>Non-word</strong>.</div>
+</div>
+<p>Really, the only new manipulation is the use of <code>WSDesign</code>
+where for each within-subject variable in the dataset, the levels of the
+corresponding factors (in the order they were given in
+<code>WSFactors</code>) are listed.</p>
+<p>Note that the WSDesign levels superseeds the total number of levels,
+<em>4</em>, given in the <code>WSFactors</code>. Hence,
+<code>Nletters</code> could be given as <code>Nletters(99)</code> or as
+<code>Nletters(1)</code>, that has no longer any impact on the plot.</p>
+<p>Also note that if the data are given in a long format, you can omit
+the argument <code>WSDesign</code>. The long format contains enough
+information for <code>superb()</code> to correctly guess the
+conditions.</p>
+</div>
+<div id="in-summary" class="section level2">
+<h2>In summary</h2>
+<p>Full-factorial design are generally prefered as powerfull analyses
+can manipulate such data (for example, the ANOVA). Further, causality in
+experimental designs are more aptly assessed with the full-factorial
+design. However, it is not always possible or usefull to run a
+full-factorial design.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
